@@ -1,0 +1,12 @@
+name: appset
+color: blue
+sha: 000000
+template:
+  project: default
+  source:
+    repoURL: https://github.com/argo-multiverse-labs/recursive.git
+    targetRevision: HEAD
+    path: examples/blankchart
+  destination:
+    server: server
+    namespace: argocd

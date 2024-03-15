@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  # name: {{ .Release.Name }}
+  name: {{ .Values.color }}{{ .Values.name }}{{ .Values.sha }}
+spec:
+  generators:
+  - clusters: {}
+  template:
+    metadata:
+      name: {{ .Values.color }}{{ .Values.name }}{{ .Values.sha }}
+    spec:
+      project: "{{ .Values.template.project }}"
+      source:
+        repoURL: {{ .Values.template.source.repoURL }}
+        targetRevision: {{ .Values.template.source.targetRevision }}
+        path: {{ .Values.template.source.path }}
+        helm:
+          releaseName: {{ .Values.color }}{{ .Values.name }}{{ .Values.sha }}
+          valuesObject:
+            sha: {{ .Release.Name | sha256sum | trunc 5 }}
+            color: {{ .Values.color }}
+            name: {{ printf "'{{name}}'" }}
+      destination:
+        server: {{ printf "'{{%s}}'" .Values.template.destination.server }}
+        namespace: {{ .Values.template.destination.namespace }}
+  
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
+
+## Desired Name color-cluster-sha
+## Sha represents the generation and feeds into the next sha
